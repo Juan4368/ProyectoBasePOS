@@ -20,11 +20,15 @@ class ProductEntity(BaseModel):
     descripcion: Optional[str] = None
     precio_venta: Decimal = Field(default=Decimal("0.00"), ge=Decimal("0.00"))
     costo: Decimal = Field(default=Decimal("0.00"), ge=Decimal("0.00"))
+    margen: Optional[Decimal] = None
     creado_por_id: Optional[int] = None
     actualizado_por_id: Optional[int] = None
     fecha_creacion: Optional[datetime] = None
     fecha_actualizacion: Optional[datetime] = None
     estado: bool = True
+    categoria_nombre: Optional[str] = None
+    creado_por_nombre: Optional[str] = None
+    actualizado_por_nombre: Optional[str] = None
 
     # Configuracion para Pydantic v2
     model_config = ConfigDict(
@@ -46,6 +50,18 @@ class ProductEntity(BaseModel):
             val = Decimal(str(v or "0"))
         if val < 0:
             raise ValueError("El precio no puede ser negativo")
+        return val
+
+    @field_validator("margen", mode="before")
+    def _ensure_decimal_margen(cls, v) -> Optional[Decimal]:
+        if v is None:
+            return None
+        if isinstance(v, Decimal):
+            val = v
+        else:
+            val = Decimal(str(v))
+        if val < 0:
+            raise ValueError("El margen no puede ser negativo")
         return val
 
     @field_validator("categoria_id", mode="before")

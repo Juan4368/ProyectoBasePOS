@@ -1,6 +1,7 @@
 ﻿from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import List, Optional
 
 from domain.entities.productsEntity import ProductEntity
@@ -27,4 +28,27 @@ class ProductRepositoryInterface(ABC):
     @abstractmethod
     def search_products(self, term: str) -> List[ProductEntity]:
         """Busca productos por nombre, descripcion, codigo_barras, precio_venta, costo o estado."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def update_product(
+        self, product_id: int, product_entity: ProductEntity
+    ) -> Optional[ProductEntity]:
+        """Actualiza un producto y devuelve la entidad o None si no existe."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def update_product_status(
+        self,
+        product_id: int,
+        estado: bool,
+        actualizado_por_id: Optional[int] = None,
+        fecha_actualizacion: Optional[datetime] = None,
+    ) -> Optional[ProductEntity]:
+        """Actualiza el estado del producto y devuelve la entidad o None si no existe."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def import_products(self, products: List[ProductEntity]) -> tuple[int, int]:
+        """Importa productos en lote y devuelve (creados, omitidos)."""
         raise NotImplementedError

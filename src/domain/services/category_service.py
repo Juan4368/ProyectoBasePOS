@@ -42,3 +42,6 @@ class CategoryService(ICategoryService):
     def search_categories(self, term: str) -> List[CategoryResponse]:
         categorias = self.repository.search_categories(term)
         return [CategoryResponse.model_validate(cat) for cat in categorias]
+
+    def delete_category(self, category_id: int) -> bool:
+        return self.repository.delete_category(category_id)

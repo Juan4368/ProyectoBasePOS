@@ -33,5 +33,7 @@ class CategoryResponse(BaseModel):
     fecha_actualizacion: Optional[datetime]
     creado_por_id: Optional[int]
     actualizado_por_id: Optional[int]
+    creado_por_nombre: Optional[str] = None
+    actualizado_por_nombre: Optional[str] = None
 
     model_config = {"from_attributes": True}

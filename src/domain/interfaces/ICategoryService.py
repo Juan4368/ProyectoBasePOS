@@ -22,3 +22,7 @@ class ICategoryService(ABC):
     @abstractmethod
     def search_categories(self, term: str) -> List[CategoryResponse]:
         ...
+
+    @abstractmethod
+    def delete_category(self, category_id: int) -> bool:
+        ...

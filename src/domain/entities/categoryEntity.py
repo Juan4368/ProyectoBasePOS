@@ -20,6 +20,8 @@ class CategoryEntity(BaseModel):
     descripcion: Optional[str] = None
     creado_por_id: Optional[int] = None
     actualizado_por_id: Optional[int] = None
+    creado_por_nombre: Optional[str] = None
+    actualizado_por_nombre: Optional[str] = None
 
     model_config = ConfigDict(
         from_attributes=True,

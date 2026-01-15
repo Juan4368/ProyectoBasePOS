@@ -28,3 +28,8 @@ class CategoryRepositoryInterface(ABC):
     def search_categories(self, term: str) -> List[CategoryEntity]:
         """Busca categorias por nombre, descripcion o estado."""
         raise NotImplementedError
+
+    @abstractmethod
+    def delete_category(self, category_id: int) -> bool:
+        """Elimina una categoria por ID y devuelve True si fue borrada."""
+        raise NotImplementedError

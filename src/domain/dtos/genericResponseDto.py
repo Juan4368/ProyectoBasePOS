@@ -14,3 +14,11 @@ class CreationResponse(GenericModel, Generic[T]):
     data: T
 
     model_config = {"from_attributes": True}
+
+
+class MessageResponse(GenericModel):
+    """DTO generico para respuestas con solo mensaje."""
+
+    message: str
+
+    model_config = {"from_attributes": True}

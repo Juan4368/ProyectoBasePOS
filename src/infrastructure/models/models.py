@@ -191,6 +191,7 @@ class Product(Base):
     nombre: Mapped[str] = mapped_column(String(255), nullable=False)
     precio_venta: Mapped[decimal.Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     costo: Mapped[decimal.Decimal] = mapped_column(Numeric(10, 2), nullable=False)
+    margen: Mapped[Optional[decimal.Decimal]] = mapped_column(Numeric(10, 2))
     fecha_creacion: Mapped[datetime.datetime] = mapped_column(DateTime(True), nullable=False)
     fecha_actualizacion: Mapped[datetime.datetime] = mapped_column(DateTime(True), nullable=False)
     estado: Mapped[bool] = mapped_column(Boolean, nullable=False)

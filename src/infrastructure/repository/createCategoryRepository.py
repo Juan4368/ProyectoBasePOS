@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from typing import List, Optional
 
 from sqlalchemy import or_
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from domain.entities.categoryEntity import CategoryEntity
 from domain.interfaces.category_repository_interface import CategoryRepositoryInterface
@@ -34,17 +34,32 @@ class CategoryRepository(CategoryRepositoryInterface):
         self.db.add(categoria_orm)
         self.db.commit()
         self.db.refresh(categoria_orm)
-        return CategoryEntity.from_model(categoria_orm)
+        return self._to_entity(categoria_orm)
 
     def list_categories(self) -> List[CategoryEntity]:
-        records = self.db.query(Categoria).all()
-        return [CategoryEntity.from_model(row) for row in records]
+        records = (
+            self.db.query(Categoria)
+            .options(
+                joinedload(Categoria.creado_por),
+                joinedload(Categoria.actualizado_por),
+            )
+            .all()
+        )
+        return [self._to_entity(row) for row in records]
 
     def get_category(self, category_id: int) -> Optional[CategoryEntity]:
-        record = self.db.get(Categoria, category_id)
+        record = (
+            self.db.query(Categoria)
+            .options(
+                joinedload(Categoria.creado_por),
+                joinedload(Categoria.actualizado_por),
+            )
+            .filter(Categoria.categoria_id == category_id)
+            .first()
+        )
         if not record:
             return None
-        return CategoryEntity.from_model(record)
+        return self._to_entity(record)
 
     def search_categories(self, term: str) -> List[CategoryEntity]:
         like_term = f"%{term}%"
@@ -61,5 +76,31 @@ class CategoryRepository(CategoryRepositoryInterface):
         elif lowered in falsy:
             filters.append(Categoria.estado.is_(False))
 
-        records = self.db.query(Categoria).filter(or_(*filters)).all()
-        return [CategoryEntity.from_model(row) for row in records]
+        records = (
+            self.db.query(Categoria)
+            .options(
+                joinedload(Categoria.creado_por),
+                joinedload(Categoria.actualizado_por),
+            )
+            .filter(or_(*filters))
+            .all()
+        )
+        return [self._to_entity(row) for row in records]
+
+    def delete_category(self, category_id: int) -> bool:
+        record = self.db.get(Categoria, category_id)
+        if not record:
+            return False
+        self.db.delete(record)
+        self.db.commit()
+        return True
+
+    def _to_entity(self, record: Categoria) -> CategoryEntity:
+        entity = CategoryEntity.from_model(record)
+        entity.creado_por_nombre = (
+            record.creado_por.nombre_completo if record.creado_por else None
+        )
+        entity.actualizado_por_nombre = (
+            record.actualizado_por.nombre_completo if record.actualizado_por else None
+        )
+        return entity

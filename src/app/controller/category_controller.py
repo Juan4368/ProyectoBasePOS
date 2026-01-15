@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from src.config import get_db
 from src.domain.dtos.categoryDto import CategoryRequest, CategoryResponse
-from src.domain.dtos.genericResponseDto import CreationResponse
+from src.domain.dtos.genericResponseDto import CreationResponse, MessageResponse
 from src.domain.services.category_service import CategoryService
 from src.infrastructure.repository.createCategoryRepository import CategoryRepository
 
@@ -62,3 +62,14 @@ def get_category(category_id: int, service: ServiceDep) -> CategoryResponse:
             detail="Categoria no encontrada",
         )
     return categoria
+
+
+@router.delete("/{category_id}", response_model=MessageResponse)
+def delete_category(category_id: int, service: ServiceDep) -> MessageResponse:
+    deleted = service.delete_category(category_id)
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Categoria no encontrada",
+        )
+    return MessageResponse(message="Categoria eliminada")

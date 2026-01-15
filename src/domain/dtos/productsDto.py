@@ -16,11 +16,34 @@ class ProductRequest(BaseModel):
     descripcion: Optional[str] = None
     precio_venta: Decimal = Field(..., ge=Decimal("0.00"))
     costo: Decimal = Field(..., ge=Decimal("0.00"))
+    margen: Optional[Decimal] = Field(None, ge=Decimal("0.00"))
     creado_por_id: Optional[int] = None
     actualizado_por_id: Optional[int] = None
     fecha_creacion: Optional[datetime] = None
     fecha_actualizacion: Optional[datetime] = None
     estado: bool = True
+
+
+class ProductStatusUpdate(BaseModel):
+    """
+    DTO para actualizar el estado de un producto.
+    """
+
+    estado: bool
+    actualizado_por_id: Optional[int] = None
+    fecha_actualizacion: Optional[datetime] = None
+
+
+class ProductImportError(BaseModel):
+    row: int
+    message: str
+
+
+class ProductImportResponse(BaseModel):
+    created: int
+    skipped: int
+    invalid: int
+    errors: list[ProductImportError] = Field(default_factory=list)
 
 
 class ProductResponse(BaseModel):
@@ -34,11 +57,15 @@ class ProductResponse(BaseModel):
     descripcion: Optional[str]
     precio_venta: Decimal
     costo: Decimal
+    margen: Optional[Decimal] = None
     creado_por_id: Optional[int]
     actualizado_por_id: Optional[int]
     fecha_creacion: Optional[datetime]
     fecha_actualizacion: Optional[datetime]
     estado: bool
+    categoria_nombre: Optional[str] = None
+    creado_por_nombre: Optional[str] = None
+    actualizado_por_nombre: Optional[str] = None
 
     class Config:
         from_attributes = True  # Permite construir desde objetos con atributos (ORM, entidades, etc.)
